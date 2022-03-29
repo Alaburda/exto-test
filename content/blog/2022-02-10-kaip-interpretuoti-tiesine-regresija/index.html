@@ -1,0 +1,97 @@
+---
+title: Kaip interpretuoti tiesinę regresiją?
+author: Paulius Alaburda
+date: '2022-02-10'
+slug: []
+categories: []
+tags: []
+subtitle: ''
+summary: ''
+authors: []
+lastmod: '2022-02-10T22:32:57+02:00'
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+thumb_image: 'images/4.jpg'
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>Dažnas statistikos kursas palieka tiesines regresijas pačioje pabaigoje kaip “pažengusiųjų” techniką, tačiau tiesinės regresijos iš tikrųjų tveria kelią statistiniam modeliavimui ir informatyvesnėms analizėms! Pažiūrėkite, kaip interpretuoti tiesinės regresijos modelį.</p>
+<div id="vienas-nepriklausomas-kintamasis" class="section level1">
+<h1>Vienas nepriklausomas kintamasis</h1>
+<p>Pirma sukonstruokime tiesinės regresijos modelį iš palmerpenguins paketo duomenų rinkinio penguins. Bandysime įvertinti flipper_length_mm ir bill_length_mm tarpusavio santykį. Mūsų tiesinės regresijos modelio formulė atrodys taip:</p>
+<pre><code>## Warning: package &#39;palmerpenguins&#39; was built under R version 4.0.5</code></pre>
+<p><span class="math display">\[
+\operatorname{bill\_length\_mm} = \alpha + \beta_{1}(\operatorname{flipper\_length\_mm}) + \epsilon
+\]</span></p>
+<p>Čia yra modelio konstanta (intercept), kuri apibūdina priklausomo kintamojo reikšmę (bill_length_mm), kai visi koeficientai yra lygūs 0. _{1} yra koeficientas, kuris apibūdina, kiek padidėja arba sumažėja bill_length_mm, kai keičiasi flipper_length_mm. gali būti suprantama kaip modelio paklaida arba nepamatuota variacija.</p>
+<p>Taip mūsų modelis atrodys naudodami lm() formulę ir gausime tokį modelio apibendrinimą:</p>
+<pre class="r"><code>library(palmerpenguins)
+
+fit1 &lt;- lm(data = penguins, bill_length_mm ~ flipper_length_mm)
+
+summary(fit1)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = bill_length_mm ~ flipper_length_mm, data = penguins)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -8.5792 -2.6715 -0.5721  2.0148 19.1518 
+## 
+## Coefficients:
+##                   Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)       -7.26487    3.20016   -2.27   0.0238 *  
+## flipper_length_mm  0.25477    0.01589   16.03   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 4.126 on 340 degrees of freedom
+##   (2 observations deleted due to missingness)
+## Multiple R-squared:  0.4306, Adjusted R-squared:  0.4289 
+## F-statistic: 257.1 on 1 and 340 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Tiesinės regresijos modelis pateikia visą informaciją, bet mums reikia tik kelių svarbių skaičių! (Intercept) eilutė nusako</p>
+<p><span class="math display">\[
+\operatorname{bill\_length\_mm} = \alpha + \beta_{1}(\operatorname{flipper\_length\_mm}) + \epsilon
+\]</span></p>
+<pre class="r"><code>equatiomatic::extract_eq(fit1, use_coefs = TRUE)</code></pre>
+<p><span class="math display">\[
+\operatorname{\widehat{bill\_length\_mm}} = -7.26 + 0.25(\operatorname{flipper\_length\_mm})
+\]</span></p>
+</div>
+<div id="keli-nepriklausomi-kintamieji" class="section level1">
+<h1>Keli nepriklausomi kintamieji</h1>
+<p>Interpretavimas pasidaro sudėtingesnis, kai yra keli kintamieji. Įveskime rūšį:</p>
+<pre class="r"><code>fit2 &lt;- lm(data = penguins, bill_length_mm ~ flipper_length_mm + species)
+
+summary(fit2)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = bill_length_mm ~ flipper_length_mm + species, data = penguins)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -6.662 -1.746  0.028  1.825 12.354 
+## 
+## Coefficients:
+##                   Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)       -2.05859    4.03855  -0.510    0.611    
+## flipper_length_mm  0.21505    0.02123  10.129  &lt; 2e-16 ***
+## speciesChinstrap   8.78010    0.39912  21.998  &lt; 2e-16 ***
+## speciesGentoo      2.85689    0.65861   4.338  1.9e-05 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 2.596 on 338 degrees of freedom
+##   (2 observations deleted due to missingness)
+## Multiple R-squared:  0.7758, Adjusted R-squared:  0.7739 
+## F-statistic:   390 on 3 and 338 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Apie tai, kodėl kintamieji apsivertė, galima rasti kitame įraše apie Simpsono paradoksą, tačiau</p>
+<p><a href="https://www.sciencedirect.com/science/article/abs/pii/S0895435618309867" class="uri">https://www.sciencedirect.com/science/article/abs/pii/S0895435618309867</a>
+<a href="https://github.com/jtleek/readingpapers" class="uri">https://github.com/jtleek/readingpapers</a></p>
+</div>

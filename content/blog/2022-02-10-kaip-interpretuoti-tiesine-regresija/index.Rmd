@@ -1,0 +1,95 @@
+---
+title: Kaip interpretuoti tiesinę regresiją?
+author: Paulius Alaburda
+date: '2022-02-10'
+slug: []
+categories: []
+tags: []
+subtitle: ''
+summary: ''
+authors: []
+lastmod: '2022-02-10T22:32:57+02:00'
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+thumb_image: 'images/4.jpg'
+---
+
+Dažnas statistikos kursas palieka tiesines regresijas pačioje pabaigoje kaip "pažengusiųjų" techniką, tačiau tiesinės regresijos iš tikrųjų tveria kelią statistiniam modeliavimui ir informatyvesnėms analizėms! Pažiūrėkite, kaip interpretuoti tiesinės regresijos modelį.
+
+# Vienas nepriklausomas kintamasis
+
+Pirma sukonstruokime tiesinės regresijos modelį iš palmerpenguins paketo duomenų rinkinio penguins. Bandysime įvertinti flipper_length_mm ir bill_length_mm tarpusavio santykį. Mūsų tiesinės regresijos modelio formulė atrodys taip:
+
+```{r, echo = FALSE}
+
+
+library(palmerpenguins)
+
+fit1 <- lm(data = penguins, bill_length_mm ~ flipper_length_mm)
+equatiomatic::extract_eq(fit1)
+
+```
+
+Čia \alpha yra modelio konstanta (intercept), kuri apibūdina priklausomo kintamojo reikšmę (bill_length_mm), kai visi koeficientai yra lygūs 0. \beta_{1} yra koeficientas, kuris apibūdina, kiek padidėja arba sumažėja bill_length_mm, kai keičiasi flipper_length_mm. \epsilon gali būti suprantama kaip modelio paklaida arba nepamatuota variacija.
+
+Taip mūsų modelis atrodys naudodami lm() formulę ir gausime tokį modelio apibendrinimą:
+
+```{r}
+
+library(palmerpenguins)
+
+fit1 <- lm(data = penguins, bill_length_mm ~ flipper_length_mm)
+
+summary(fit1)
+
+```
+Tiesinės regresijos modelis pateikia visą informaciją, bet mums reikia tik kelių svarbių skaičių! (Intercept) eilutė nusako 
+
+
+```{r, echo = FALSE}
+
+
+equatiomatic::extract_eq(fit1)
+
+
+
+```
+
+```{r}
+
+equatiomatic::extract_eq(fit1, use_coefs = TRUE)
+
+```
+
+
+# Keli nepriklausomi kintamieji
+
+Interpretavimas pasidaro sudėtingesnis, kai yra keli kintamieji. Įveskime rūšį:
+
+```{r, echo = FALSE}
+
+
+```
+
+
+```{r}
+
+
+fit2 <- lm(data = penguins, bill_length_mm ~ flipper_length_mm + species)
+
+summary(fit2)
+
+```
+
+Apie tai, kodėl kintamieji apsivertė, galima rasti kitame įraše apie Simpsono paradoksą, tačiau 
+
+
+
+
+
+https://www.sciencedirect.com/science/article/abs/pii/S0895435618309867
+https://github.com/jtleek/readingpapers
